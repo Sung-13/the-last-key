@@ -8,6 +8,10 @@ Xcode project exists at `TheLastKey/TheLastKey.xcodeproj`, **Xcode 16 format wit
 
 `xcodebuild` works headlessly: build with `xcodebuild -project TheLastKey/TheLastKey.xcodeproj -scheme TheLastKey -destination 'platform=iOS Simulator,name=iPhone 17' build`; tests with `... -only-testing:TheLastKeyTests test`. The newest available simulator on this machine is iPhone 17 (iOS 26.4.1) — `iPhone 16` is NOT installed.
 
+As of commit `243662f`: BUILD SUCCEEDED and all 8 `ClozeFormatterTests` pass on iPhone 17 / iOS 26.4.1. The morning-ritual UX (reveal animation, TTS, Got it / Review again, cross-day session ordering) has NOT been smoke-tested in the simulator yet — that's the only remaining verification step.
+
+**TTS-on-simulator gotcha:** if `▶ Listen` plays nothing on the iOS Simulator, check (a) Mac system volume isn't muted, (b) Simulator menu → **Device → Audio Output** is set to a real output (not "None"). This trips people up because the silence looks like a TTS bug.
+
 Hosted on GitHub at **[Sung-13/the-last-key](https://github.com/Sung-13/the-last-key)** (default branch `main`). Initial commit `986e74b` was authored as `Sungkyung Kim <sungkyungkim@Sungkyungs-Mac-mini.local>` because no global git identity was configured at init time. Identity has since been set to `Sung Kim <207924699+Sung-13@users.noreply.github.com>` so future commits link properly to the GitHub profile.
 
 ## Confirmed product decisions (do not re-litigate)
