@@ -18,11 +18,11 @@ final class ClozeFormatterTests: XCTestCase {
     }
 
     func test_contractionWithStraightApostrophe() {
-        XCTAssertEqual(ClozeFormatter.cue("don't"), "d___'_")
+        XCTAssertEqual(ClozeFormatter.cue("don't"), "d__'_")
     }
 
     func test_contractionWithCurlyApostrophe() {
-        XCTAssertEqual(ClozeFormatter.cue("don\u{2019}t"), "d___\u{2019}_")
+        XCTAssertEqual(ClozeFormatter.cue("don\u{2019}t"), "d__\u{2019}_")
     }
 
     func test_capitalisationPreserved() {
