@@ -7,6 +7,7 @@ struct ContentView: View {
     }
 
     @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("didSeedInitialEntries") private var didSeed = false
 
     @State private var selectedTab: Tab = .today
@@ -30,6 +31,11 @@ struct ContentView: View {
                 .tag(Tab.settings)
         }
         .task { seedIfNeeded() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                StreakRecorder.mirrorToWidget(in: context)
+            }
+        }
     }
 
     private func seedIfNeeded() {

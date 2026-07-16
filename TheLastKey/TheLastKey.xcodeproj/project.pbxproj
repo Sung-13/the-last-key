@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4B2709847342ECE45A856929 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 943C927CCE867687C0B9378B /* Foundation.framework */; };
+		9A21F576A37975E839ACCA71 /* TheLastKeyWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69ADA9DEB8565527EDE9DF4A /* TheLastKeyWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		3B9799282F9D601C00A9B058 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,15 +26,45 @@
 			remoteGlobalIDString = 3B9799172F9D601B00A9B058;
 			remoteInfo = TheLastKey;
 		};
+		DA1D2EC66BD90FADD42601E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B9799102F9D601B00A9B058 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 92779EA3BE99897942A5153C;
+			remoteInfo = TheLastKeyWidget;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B80C1ABE6549F17D504341C0 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				9A21F576A37975E839ACCA71 /* TheLastKeyWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3B9799182F9D601B00A9B058 /* TheLastKey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheLastKey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9799272F9D601C00A9B058 /* TheLastKeyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheLastKeyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9799312F9D601C00A9B058 /* TheLastKeyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheLastKeyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		69ADA9DEB8565527EDE9DF4A /* TheLastKeyWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TheLastKeyWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		943C927CCE867687C0B9378B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		2EBE1CC1172468CB4CFBA7AB /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		3B97991A2F9D601B00A9B058 /* TheLastKey */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -49,6 +84,13 @@
 			exceptions = (
 			);
 			path = TheLastKeyUITests;
+			sourceTree = "<group>";
+		};
+		46B2E94A264ADD97355FC5D5 /* TheLastKeyWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = TheLastKeyWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +117,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		590E986B2B3BD5236A4A7EEC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B2709847342ECE45A856929 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -85,6 +135,9 @@
 				3B97992A2F9D601C00A9B058 /* TheLastKeyTests */,
 				3B9799342F9D601C00A9B058 /* TheLastKeyUITests */,
 				3B9799192F9D601B00A9B058 /* Products */,
+				71243A60A96BFADCE0609E39 /* Frameworks */,
+				46B2E94A264ADD97355FC5D5 /* TheLastKeyWidget */,
+				2EBE1CC1172468CB4CFBA7AB /* Shared */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,8 +147,25 @@
 				3B9799182F9D601B00A9B058 /* TheLastKey.app */,
 				3B9799272F9D601C00A9B058 /* TheLastKeyTests.xctest */,
 				3B9799312F9D601C00A9B058 /* TheLastKeyUITests.xctest */,
+				69ADA9DEB8565527EDE9DF4A /* TheLastKeyWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		71243A60A96BFADCE0609E39 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8DA6B4092ED96A7F953F3E63 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8DA6B4092ED96A7F953F3E63 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				943C927CCE867687C0B9378B /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -108,13 +178,16 @@
 				3B9799142F9D601B00A9B058 /* Sources */,
 				3B9799152F9D601B00A9B058 /* Frameworks */,
 				3B9799162F9D601B00A9B058 /* Resources */,
+				B80C1ABE6549F17D504341C0 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6B8174001296E2FE7B8F8387 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				3B97991A2F9D601B00A9B058 /* TheLastKey */,
+				2EBE1CC1172468CB4CFBA7AB /* Shared */,
 			);
 			name = TheLastKey;
 			productName = TheLastKey;
@@ -163,6 +236,27 @@
 			productReference = 3B9799312F9D601C00A9B058 /* TheLastKeyUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		92779EA3BE99897942A5153C /* TheLastKeyWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EA1D19868C5C02F68A87FEC8 /* Build configuration list for PBXNativeTarget "TheLastKeyWidget" */;
+			buildPhases = (
+				11D8D8C53B554912C23B3F71 /* Sources */,
+				590E986B2B3BD5236A4A7EEC /* Frameworks */,
+				A7DB82CAA1CB88729E7094F5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				46B2E94A264ADD97355FC5D5 /* TheLastKeyWidget */,
+				2EBE1CC1172468CB4CFBA7AB /* Shared */,
+			);
+			name = TheLastKeyWidget;
+			productName = TheLastKeyWidget;
+			productReference = 69ADA9DEB8565527EDE9DF4A /* TheLastKeyWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -203,6 +297,7 @@
 				3B9799172F9D601B00A9B058 /* TheLastKey */,
 				3B9799262F9D601C00A9B058 /* TheLastKeyTests */,
 				3B9799302F9D601C00A9B058 /* TheLastKeyUITests */,
+				92779EA3BE99897942A5153C /* TheLastKeyWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -229,9 +324,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A7DB82CAA1CB88729E7094F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		11D8D8C53B554912C23B3F71 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B9799142F9D601B00A9B058 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -266,9 +375,41 @@
 			target = 3B9799172F9D601B00A9B058 /* TheLastKey */;
 			targetProxy = 3B9799322F9D601C00A9B058 /* PBXContainerItemProxy */;
 		};
+		6B8174001296E2FE7B8F8387 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TheLastKeyWidget;
+			target = 92779EA3BE99897942A5153C /* TheLastKeyWidget */;
+			targetProxy = DA1D2EC66BD90FADD42601E3 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		285B52E8B2B87A44DB307BCE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Config/TheLastKeyWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/TheLastKeyWidgetInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "The Last Key";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sung13.TheLastKey.TheLastKeyWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		3B9799392F9D601C00A9B058 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -393,6 +534,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/TheLastKey.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -426,6 +568,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/TheLastKey.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -536,6 +679,33 @@
 			};
 			name = Release;
 		};
+		C9602B15770864982607DB2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Config/TheLastKeyWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/TheLastKeyWidgetInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "The Last Key";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sung13.TheLastKey.TheLastKeyWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -571,6 +741,15 @@
 			buildConfigurations = (
 				3B9799422F9D601C00A9B058 /* Debug */,
 				3B9799432F9D601C00A9B058 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EA1D19868C5C02F68A87FEC8 /* Build configuration list for PBXNativeTarget "TheLastKeyWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9602B15770864982607DB2C /* Release */,
+				285B52E8B2B87A44DB307BCE /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
