@@ -44,6 +44,12 @@ struct PracticeView: View {
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             entry.needsReview = queue.advance(remembered: remembered)
         }
+        if queue.isDone {
+            // `advance` empties the queue exactly once per session, so this
+            // records the completed day exactly once (unlike the completion
+            // view's .onAppear, which re-fires on re-render).
+            StreakRecorder.recordCompletion(in: context)
+        }
         try? context.save()
     }
 

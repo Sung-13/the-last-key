@@ -53,13 +53,25 @@ enum PreviewSamples {
         ]
     }
 
+    /// A 5-day run ending yesterday (today pending) plus scattered older days.
+    static func makePracticeDays() -> [PracticeDay] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        return [-1, -2, -3, -4, -5, -8, -9, -12, -20, -21, -22, -30].map {
+            PracticeDay(date: calendar.date(byAdding: .day, value: $0, to: today)!)
+        }
+    }
+
     @MainActor
     static let modelContainer: ModelContainer = {
-        let schema = Schema([Entry.self])
+        let schema = Schema([Entry.self, PracticeDay.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: schema, configurations: [config])
         for entry in makeEntries() {
             container.mainContext.insert(entry)
+        }
+        for day in makePracticeDays() {
+            container.mainContext.insert(day)
         }
         return container
     }()

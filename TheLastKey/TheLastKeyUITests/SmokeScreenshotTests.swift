@@ -67,6 +67,17 @@ final class SmokeScreenshotTests: XCTestCase {
         snap(app, "04-session-done")
         app.buttons["Close"].tap()
 
+        // Back on Today: the streak card must reflect the completed session.
+        // (Existence + "done today" only — the suite re-runs on the same day,
+        // so never assert an exact streak count.)
+        let streakCard = app.descendants(matching: .any)
+            .matching(identifier: "streakCard").firstMatch
+        XCTAssertTrue(streakCard.waitForExistence(timeout: 5),
+                      "Streak card missing on Today after session")
+        XCTAssertTrue(streakCard.label.contains("practiced today"),
+                      "Streak card should show today as done")
+        snap(app, "04b-today-streak")
+
         // Library
         app.tabBars.buttons["Library"].tap()
         XCTAssertTrue(app.navigationBars["Library"].waitForExistence(timeout: 5))

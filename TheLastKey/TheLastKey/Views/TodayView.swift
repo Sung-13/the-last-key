@@ -21,6 +21,7 @@ struct TodayView: View {
     var onAddSentences: () -> Void = {}
 
     @Query private var entries: [Entry]
+    @Query(sort: \PracticeDay.date) private var practiceDays: [PracticeDay]
     @AppStorage("dailySessionSize") private var dailySessionSize: Int = 5
 
     @State private var practiceRoute: PracticeRoute?
@@ -73,6 +74,10 @@ struct TodayView: View {
                         .font(.system(.largeTitle, design: .rounded).bold())
 
                     heroCard
+
+                    if !entries.isEmpty {
+                        StreakView(days: practiceDays)
+                    }
 
                     Spacer()
 
@@ -144,5 +149,5 @@ struct TodayView: View {
 
 #Preview("Empty library") {
     TodayView()
-        .modelContainer(for: Entry.self, inMemory: true)
+        .modelContainer(for: [Entry.self, PracticeDay.self], inMemory: true)
 }

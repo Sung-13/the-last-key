@@ -7,6 +7,6 @@ struct TheLastKeyApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: Entry.self)
+        .modelContainer(for: [Entry.self, PracticeDay.self])
     }
 }
