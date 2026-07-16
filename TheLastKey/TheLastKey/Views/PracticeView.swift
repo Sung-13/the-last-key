@@ -50,7 +50,7 @@ struct PracticeView: View {
     private var progressHeader: some View {
         VStack(spacing: 8) {
             Text("Card \(queue.position) of \(queue.total)")
-                .font(.system(.caption, design: .rounded).weight(.semibold))
+                .font(.system(.footnote, design: .rounded).weight(.semibold))
                 .foregroundStyle(.secondary)
 
             GeometryReader { geo in
@@ -88,7 +88,7 @@ struct PracticeView: View {
                 .multilineTextAlignment(.center)
 
             Text("You worked through \(queue.total) card\(queue.total == 1 ? "" : "s") today.")
-                .font(.system(.subheadline, design: .rounded))
+                .font(.system(.body, design: .rounded))
                 .foregroundStyle(.secondary)
 
             Button("Close") { dismiss() }

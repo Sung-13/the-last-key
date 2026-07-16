@@ -93,7 +93,7 @@ struct LibraryView: View {
                     .foregroundStyle(.primary)
                     .lineLimit(2)
                 Text(entry.meaning)
-                    .font(.caption)
+                    .font(.system(.footnote, design: .rounded))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                 Text(lastSeenCaption(for: entry))

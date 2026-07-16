@@ -1,6 +1,20 @@
 import SwiftUI
 import SwiftData
 
+/// Identity-stable wrapper for a running practice session. Pushing via
+/// `navigationDestination(item:)` keyed on this id keeps the PracticeView's
+/// state alive across TodayView re-evaluations — with the plain
+/// `isPresented:` variant, a @Query update mid-session (every card grade
+/// saves) could pop and re-push the destination, silently restarting the
+/// session with a fresh queue.
+struct PracticeRoute: Identifiable, Hashable {
+    let id = UUID()
+    let entries: [Entry]
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+}
+
 struct TodayView: View {
     /// Invoked from the empty-library CTA; the parent switches to the
     /// Library tab and opens the add sheet.
@@ -9,8 +23,7 @@ struct TodayView: View {
     @Query private var entries: [Entry]
     @AppStorage("dailySessionSize") private var dailySessionSize: Int = 5
 
-    @State private var session: [Entry] = []
-    @State private var showingPractice = false
+    @State private var practiceRoute: PracticeRoute?
 
     private var greeting: (text: String, symbol: String) {
         switch Calendar.current.component(.hour, from: .now) {
@@ -27,6 +40,9 @@ struct TodayView: View {
     private var lastReviewedCaption: String {
         guard let mostRecent = entries.compactMap({ $0.dateLastSeen }).max() else {
             return "No sessions yet."
+        }
+        guard Date.now.timeIntervalSince(mostRecent) >= 60 else {
+            return "Last reviewed just now"
         }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
@@ -67,8 +83,7 @@ struct TodayView: View {
                         .buttonStyle(DawnPrimaryButtonStyle())
                     } else {
                         Button {
-                            session = previewedSession
-                            showingPractice = true
+                            practiceRoute = PracticeRoute(entries: previewedSession)
                         } label: {
                             Text("Start today's session · \(previewedSession.count) card\(previewedSession.count == 1 ? "" : "s")")
                         }
@@ -76,15 +91,15 @@ struct TodayView: View {
                     }
 
                     Text(lastReviewedCaption)
-                        .font(.system(.caption, design: .rounded))
+                        .font(.system(.footnote, design: .rounded))
                         .foregroundStyle(.secondary)
 
                     Spacer()
                 }
                 .padding(.horizontal, 24)
             }
-            .navigationDestination(isPresented: $showingPractice) {
-                PracticeView(session: session)
+            .navigationDestination(item: $practiceRoute) { route in
+                PracticeView(session: route.entries)
             }
         }
     }

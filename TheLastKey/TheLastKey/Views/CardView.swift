@@ -9,7 +9,8 @@ struct CardView: View {
     var body: some View {
         VStack(spacing: 24) {
             Text(entry.meaning)
-                .font(.system(.title3, design: .rounded).weight(.medium))
+                .font(.system(.title2, design: .rounded).weight(.semibold))
+                .lineSpacing(4)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
@@ -17,7 +18,7 @@ struct CardView: View {
 
             if revealed, let note = entry.note, !note.isEmpty {
                 Text(note)
-                    .font(.system(.callout, design: .rounded))
+                    .font(.system(.subheadline, design: .rounded))
                     .italic()
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -80,8 +81,8 @@ struct CardView: View {
                     .transition(.blurReplace)
             }
         }
-        .font(.system(.title2, design: .monospaced).weight(.medium))
-        .kerning(1)
+        .font(.system(.title2, design: .rounded).weight(.medium))
+        .lineSpacing(6)
         .multilineTextAlignment(.center)
         .padding(.vertical, 36)
         .padding(.horizontal, 20)
@@ -90,15 +91,16 @@ struct CardView: View {
         .padding(.horizontal)
     }
 
-    /// First-letter cue with the blanks tinted amber so the shape of the
-    /// sentence reads at a glance.
+    /// Keyword cloze with the blanks tinted amber and slightly spread, so
+    /// hidden words read as distinct letter slots rather than one long rule.
     private var cueText: AttributedString {
-        var attributed = AttributedString(ClozeFormatter.cue(entry.text))
+        var attributed = AttributedString(ClozeFormatter.keywordCue(entry.text))
         var index = attributed.startIndex
         while index < attributed.endIndex {
             let next = attributed.characters.index(after: index)
             if attributed.characters[index] == "_" {
                 attributed[index..<next].foregroundColor = Theme.amberDeep
+                attributed[index..<next].kern = 1.5
             }
             index = next
         }
