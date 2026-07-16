@@ -5,30 +5,20 @@ struct CardView: View {
     let onComplete: (_ remembered: Bool) -> Void
 
     @State private var revealed = false
-    @State private var speech = SpeechService()
 
     var body: some View {
         VStack(spacing: 24) {
             Text(entry.meaning)
-                .font(.title3)
+                .font(.system(.title3, design: .rounded).weight(.medium))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Divider()
-
-            Text(revealed ? entry.text : ClozeFormatter.cue(entry.text))
-                .font(.title2)
-                .monospaced()
-                .multilineTextAlignment(.center)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.secondary.opacity(0.08))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal)
+            sentenceCard
 
             if revealed, let note = entry.note, !note.isEmpty {
                 Text(note)
-                    .font(.callout)
+                    .font(.system(.callout, design: .rounded))
+                    .italic()
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -36,62 +26,83 @@ struct CardView: View {
 
             if revealed {
                 Button {
-                    speech.speak(entry.text)
+                    SpeechService.shared.speak(entry.text)
                 } label: {
-                    Label("Listen", systemImage: "play.circle.fill")
-                        .font(.title3)
+                    Label("Listen", systemImage: "speaker.wave.2.fill")
+                        .font(.system(.callout, design: .rounded).weight(.semibold))
+                        .foregroundStyle(Theme.amberDeep)
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
+                        .background(Theme.amber.opacity(0.16), in: Capsule())
                 }
             }
 
-            Spacer().frame(height: 8)
+            Spacer().frame(height: 4)
 
             if !revealed {
-                Button {
-                    withAnimation {
+                Button("Reveal") {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         revealed = true
                     }
-                    speech.speak(entry.text)
-                } label: {
-                    Text("Reveal")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.accentColor)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    SpeechService.shared.speak(entry.text)
                 }
+                .buttonStyle(DawnPrimaryButtonStyle())
                 .padding(.horizontal)
             } else {
                 HStack(spacing: 12) {
-                    Button {
+                    Button("Review again") {
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         revealed = false
                         onComplete(false)
-                    } label: {
-                        Text("Review again")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.secondary.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    .buttonStyle(DawnSecondaryButtonStyle())
 
-                    Button {
+                    Button("Got it") {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         revealed = false
                         onComplete(true)
-                    } label: {
-                        Text("Got it")
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.accentColor)
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    .buttonStyle(DawnPrimaryButtonStyle())
                 }
                 .padding(.horizontal)
             }
         }
+    }
+
+    private var sentenceCard: some View {
+        ZStack {
+            if revealed {
+                Text(entry.text)
+                    .transition(.blurReplace)
+            } else {
+                Text(cueText)
+                    .transition(.blurReplace)
+            }
+        }
+        .font(.system(.title2, design: .monospaced).weight(.medium))
+        .kerning(1)
+        .multilineTextAlignment(.center)
+        .padding(.vertical, 36)
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
+        .dawnCard()
+        .padding(.horizontal)
+    }
+
+    /// First-letter cue with the blanks tinted amber so the shape of the
+    /// sentence reads at a glance.
+    private var cueText: AttributedString {
+        var attributed = AttributedString(ClozeFormatter.cue(entry.text))
+        var index = attributed.startIndex
+        while index < attributed.endIndex {
+            let next = attributed.characters.index(after: index)
+            if attributed.characters[index] == "_" {
+                attributed[index..<next].foregroundColor = Theme.amberDeep
+            }
+            index = next
+        }
+        return attributed
     }
 }
 

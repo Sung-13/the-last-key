@@ -2,7 +2,13 @@ import AVFoundation
 import Foundation
 
 final class SpeechService {
+    /// One app-wide synthesizer so a new card or screen never talks over
+    /// the previous one and playback can be stopped from anywhere.
+    static let shared = SpeechService()
+
     private let synth = AVSpeechSynthesizer()
+
+    private init() {}
 
     func speak(_ text: String) {
         synth.stopSpeaking(at: .immediate)

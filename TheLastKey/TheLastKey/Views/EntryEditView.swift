@@ -7,9 +7,14 @@ struct EntryEditView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
+    private enum Field {
+        case sentence, meaning, note
+    }
+
     @State private var text = ""
     @State private var meaning = ""
     @State private var note = ""
+    @FocusState private var focusedField: Field?
 
     private var isValid: Bool {
         !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -22,16 +27,21 @@ struct EntryEditView: View {
                 Section("Sentence / expression") {
                     TextField("e.g. He had to bite the bullet.", text: $text, axis: .vertical)
                         .lineLimit(2...5)
+                        .focused($focusedField, equals: .sentence)
                 }
                 Section("Korean meaning") {
                     TextField("e.g. 어려운 일을 감내하다", text: $meaning, axis: .vertical)
                         .lineLimit(1...3)
+                        .focused($focusedField, equals: .meaning)
                 }
                 Section("Note (optional)") {
                     TextField("Source, context, or usage tip", text: $note, axis: .vertical)
                         .lineLimit(1...5)
+                        .focused($focusedField, equals: .note)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
             .navigationTitle(entry == nil ? "New entry" : "Edit entry")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -48,6 +58,12 @@ struct EntryEditView: View {
                     text = entry.text
                     meaning = entry.meaning
                     note = entry.note ?? ""
+                } else {
+                    // Focus after the sheet's presentation animation settles;
+                    // setting it immediately is silently dropped.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        focusedField = .sentence
+                    }
                 }
             }
         }

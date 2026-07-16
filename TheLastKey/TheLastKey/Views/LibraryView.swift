@@ -2,12 +2,21 @@ import SwiftUI
 import SwiftData
 
 struct LibraryView: View {
+    /// Owned by ContentView so the Today tab's empty-state CTA can open
+    /// the add sheet after switching tabs.
+    @Binding var showingAdd: Bool
+
     @Environment(\.modelContext) private var context
     @Query(sort: \Entry.dateAdded, order: .reverse) private var entries: [Entry]
 
-    @State private var showingAdd = false
     @State private var editingEntry: Entry?
     @State private var searchText = ""
+
+    private static let lastSeenFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .short
+        return formatter
+    }()
 
     private var filteredEntries: [Entry] {
         guard !searchText.isEmpty else { return entries }
@@ -26,23 +35,27 @@ struct LibraryView: View {
                     Button {
                         editingEntry = entry
                     } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(entry.text)
-                                .font(.body)
-                                .foregroundStyle(.primary)
-                                .lineLimit(2)
-                            Text(entry.meaning)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
+                        row(for: entry)
                     }
                     .buttonStyle(.plain)
+                    .listRowBackground(Theme.surface)
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            delete(entry)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                        Button {
+                            editingEntry = entry
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        .tint(Theme.amber)
+                    }
                 }
-                .onDelete(perform: delete)
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background)
             .searchable(text: $searchText)
             .navigationTitle("Library")
             .toolbar {
@@ -64,7 +77,7 @@ struct LibraryView: View {
                 if entries.isEmpty {
                     ContentUnavailableView(
                         "No sentences yet",
-                        systemImage: "text.book.closed",
+                        systemImage: "key.fill",
                         description: Text("Tap + to add your first sentence.")
                     )
                 }
@@ -72,20 +85,53 @@ struct LibraryView: View {
         }
     }
 
-    private func delete(at offsets: IndexSet) {
-        for index in offsets {
-            context.delete(filteredEntries[index])
+    private func row(for entry: Entry) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.text)
+                    .font(.system(.body, design: .rounded))
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                Text(entry.meaning)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                Text(lastSeenCaption(for: entry))
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+
+            Spacer(minLength: 0)
+
+            if entry.needsReview {
+                Circle()
+                    .fill(Theme.amber)
+                    .frame(width: 9, height: 9)
+                    .padding(.top, 6)
+                    .accessibilityLabel("Needs review")
+            }
         }
+        .contentShape(Rectangle())
+    }
+
+    private func lastSeenCaption(for entry: Entry) -> String {
+        guard let lastSeen = entry.dateLastSeen else { return "Not practiced yet" }
+        let relative = Self.lastSeenFormatter.localizedString(for: lastSeen, relativeTo: .now)
+        return "Practiced \(relative)"
+    }
+
+    private func delete(_ entry: Entry) {
+        context.delete(entry)
         try? context.save()
     }
 }
 
 #Preview("Seeded library") {
-    LibraryView()
+    LibraryView(showingAdd: .constant(false))
         .modelContainer(PreviewSamples.modelContainer)
 }
 
 #Preview("Empty library") {
-    LibraryView()
+    LibraryView(showingAdd: .constant(false))
         .modelContainer(for: Entry.self, inMemory: true)
 }

@@ -2,19 +2,32 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    enum Tab: Hashable {
+        case today, library, settings
+    }
+
     @Environment(\.modelContext) private var context
     @AppStorage("didSeedInitialEntries") private var didSeed = false
 
-    var body: some View {
-        TabView {
-            TodayView()
-                .tabItem { Label("Today", systemImage: "sun.max") }
+    @State private var selectedTab: Tab = .today
+    @State private var showingAddEntry = false
 
-            LibraryView()
-                .tabItem { Label("Library", systemImage: "books.vertical") }
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            TodayView(onAddSentences: {
+                selectedTab = .library
+                showingAddEntry = true
+            })
+            .tabItem { Label("Today", systemImage: "sun.max.fill") }
+            .tag(Tab.today)
+
+            LibraryView(showingAdd: $showingAddEntry)
+                .tabItem { Label("Library", systemImage: "books.vertical.fill") }
+                .tag(Tab.library)
 
             SettingsView()
-                .tabItem { Label("Settings", systemImage: "gear") }
+                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
+                .tag(Tab.settings)
         }
         .task { seedIfNeeded() }
     }

@@ -2,66 +2,101 @@ import SwiftUI
 import SwiftData
 
 struct PracticeView: View {
-    let session: [Entry]
-
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
-    @State private var index = 0
+    @State private var queue: PracticeQueue<Entry>
+    @State private var sunGlow = false
 
-    var body: some View {
-        Group {
-            if session.isEmpty {
-                ContentUnavailableView("Nothing to practice", systemImage: "books.vertical")
-            } else if index >= session.count {
-                VStack(spacing: 20) {
-                    Spacer()
-                    Text("Done — see you tomorrow ☀️")
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.center)
-                    Button("Close") { dismiss() }
-                        .buttonStyle(.borderedProminent)
-                    Spacer()
-                }
-                .padding()
-            } else {
-                VStack(spacing: 16) {
-                    ProgressDots(total: session.count, current: index)
-                        .padding(.top)
-
-                    CardView(entry: session[index]) { remembered in
-                        let entry = session[index]
-                        entry.dateLastSeen = .now
-                        entry.seenCount += 1
-                        entry.needsReview = !remembered
-                        try? context.save()
-
-                        withAnimation {
-                            index += 1
-                        }
-                    }
-
-                    Spacer()
-                }
-                .padding()
-            }
-        }
-        .navigationBarBackButtonHidden(false)
+    init(session: [Entry]) {
+        _queue = State(initialValue: PracticeQueue(session))
     }
-}
-
-private struct ProgressDots: View {
-    let total: Int
-    let current: Int
 
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<total, id: \.self) { i in
-                Circle()
-                    .fill(i < current ? Color.accentColor : Color.secondary.opacity(0.3))
-                    .frame(width: 8, height: 8)
+        ZStack {
+            Theme.background.ignoresSafeArea()
+
+            if queue.total == 0 {
+                ContentUnavailableView("Nothing to practice", systemImage: "books.vertical")
+            } else if queue.isDone {
+                completion
+            } else if let entry = queue.current {
+                VStack(spacing: 20) {
+                    progressHeader
+                        .padding(.top, 8)
+
+                    CardView(entry: entry) { remembered in
+                        grade(entry, remembered: remembered)
+                    }
+                    .id(entry.id)
+
+                    Spacer()
+                }
+                .padding()
             }
         }
+        .onDisappear { SpeechService.shared.stop() }
+    }
+
+    private func grade(_ entry: Entry, remembered: Bool) {
+        entry.dateLastSeen = .now
+        entry.seenCount += 1
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            entry.needsReview = queue.advance(remembered: remembered)
+        }
+        try? context.save()
+    }
+
+    private var progressHeader: some View {
+        VStack(spacing: 8) {
+            Text("Card \(queue.position) of \(queue.total)")
+                .font(.system(.caption, design: .rounded).weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Theme.amber.opacity(0.18))
+                    Capsule()
+                        .fill(Theme.sunrise)
+                        .frame(width: queue.progress > 0
+                               ? max(geo.size.width * queue.progress, 12)
+                               : 0)
+                }
+            }
+            .frame(height: 6)
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: queue.progress)
+        }
+    }
+
+    private var completion: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "sun.max.fill")
+                .font(.system(size: 72))
+                .foregroundStyle(Theme.sunrise)
+                .scaleEffect(sunGlow ? 1.08 : 0.94)
+                .shadow(color: Theme.amber.opacity(0.5), radius: sunGlow ? 28 : 12)
+                .onAppear {
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                    withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
+                        sunGlow = true
+                    }
+                }
+
+            Text("All done — see you tomorrow")
+                .font(.system(.title2, design: .rounded).bold())
+                .multilineTextAlignment(.center)
+
+            Text("You worked through \(queue.total) card\(queue.total == 1 ? "" : "s") today.")
+                .font(.system(.subheadline, design: .rounded))
+                .foregroundStyle(.secondary)
+
+            Button("Close") { dismiss() }
+                .buttonStyle(DawnPrimaryButtonStyle())
+                .frame(maxWidth: 220)
+                .padding(.top, 8)
+        }
+        .padding(32)
     }
 }
 
