@@ -16,6 +16,16 @@ struct PracticeRoute: Identifiable, Hashable {
 }
 
 struct TodayView: View {
+    /// Stable stand-in for "no rollover has happened yet". A `static let` is
+    /// created once, so a defaulted `dayRolloverID` never spuriously changes
+    /// between body evaluations the way an inline `UUID()` default would.
+    static let noRollover = UUID()
+
+    /// Changed by ContentView when the app returns to the foreground on a new
+    /// calendar day. A session abandoned last night must not resume this
+    /// morning — the new day gets a freshly picked queue.
+    var dayRolloverID: UUID = TodayView.noRollover
+
     /// Invoked from the empty-library CTA; the parent switches to the
     /// Library tab and opens the add sheet.
     var onAddSentences: () -> Void = {}
@@ -105,6 +115,9 @@ struct TodayView: View {
             }
             .navigationDestination(item: $practiceRoute) { route in
                 PracticeView(session: route.entries)
+            }
+            .onChange(of: dayRolloverID) { _, _ in
+                practiceRoute = nil
             }
         }
     }

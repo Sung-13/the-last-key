@@ -12,10 +12,12 @@ struct ContentView: View {
 
     @State private var selectedTab: Tab = .today
     @State private var showingAddEntry = false
+    @State private var rollover = DayRollover.Tracker()
+    @State private var dayRolloverID = TodayView.noRollover
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            TodayView(onAddSentences: {
+            TodayView(dayRolloverID: dayRolloverID, onAddSentences: {
                 selectedTab = .library
                 showingAddEntry = true
             })
@@ -30,10 +32,24 @@ struct ContentView: View {
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(Tab.settings)
         }
-        .task { seedIfNeeded() }
+        .task {
+            seedIfNeeded()
+            // Anchor the tracker at launch: `onChange(of: scenePhase)` is not
+            // guaranteed to fire for the initial transition to .active, and an
+            // unanchored first day reads as "no previous day", which would skip
+            // the reset on the very first overnight resume.
+            rollover = DayRollover.Tracker(launchedAt: .now)
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 StreakRecorder.mirrorToWidget(in: context)
+            }
+            // A cold launch always opens on Today, but iOS keeps the app
+            // suspended overnight on an idle phone, so the morning alarm
+            // automation can otherwise resume straight into last night's tab.
+            if rollover.record(phase: phase, now: .now) {
+                selectedTab = .today
+                dayRolloverID = UUID()
             }
         }
     }
