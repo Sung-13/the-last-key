@@ -9,13 +9,14 @@ struct SharedStreakStore {
     private static let key = "completedDayStarts"
 
     /// `days` must be startOfDay-normalized. Bounded — the widget only ever
-    /// looks back weeks, not years.
-    static func save(_ days: [Date]) {
+    /// looks back weeks, not years. `suiteName` is overridable for tests so
+    /// they don't touch the real App Group container.
+    static func save(_ days: [Date], suiteName: String = SharedStreakStore.suiteName) {
         UserDefaults(suiteName: suiteName)?
             .set(Array(days.sorted().suffix(400)), forKey: key)
     }
 
-    static func load() -> Set<Date> {
+    static func load(suiteName: String = SharedStreakStore.suiteName) -> Set<Date> {
         Set((UserDefaults(suiteName: suiteName)?.array(forKey: key) as? [Date]) ?? [])
     }
 }
