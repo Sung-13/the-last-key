@@ -29,8 +29,7 @@ struct PracticeView: View {
                         grade(entry, remembered: remembered)
                     }
                     .id(entry.id)
-
-                    Spacer()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 .padding()
             }

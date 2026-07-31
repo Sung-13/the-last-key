@@ -21,6 +21,10 @@ final class SmokeScreenshotTests: XCTestCase {
             NSPredicate(format: "label BEGINSWITH 'Start today'")
         ).firstMatch
         XCTAssertTrue(start.waitForExistence(timeout: 5), "Start button missing on Today")
+        let cardsPreview = app.descendants(matching: .any)
+            .matching(identifier: "todayCardsPreview").firstMatch
+        XCTAssertTrue(cardsPreview.waitForExistence(timeout: 5),
+                      "Today's cards preview missing on Today")
         snap(app, "01-today")
 
         // Parse the session size out of the button label ("… · N cards").
@@ -76,6 +80,8 @@ final class SmokeScreenshotTests: XCTestCase {
                       "Streak card missing on Today after session")
         XCTAssertTrue(streakCard.label.contains("practiced today"),
                       "Streak card should show today as done")
+        XCTAssertTrue(cardsPreview.exists,
+                      "Today's cards preview should remain after the session")
         snap(app, "04b-today-streak")
 
         // Library

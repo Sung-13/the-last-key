@@ -6,6 +6,14 @@ struct StreakView: View {
     let days: [PracticeDay]
 
     private static let weeksShown = 15
+
+    /// Squares and gaps scale together (gap = size/4), so the grid's shape is
+    /// constant: 15 + 14/4 units wide by 7 + 6/4 units tall. A fixed aspect
+    /// ratio turns the width proposal into a concrete height, which lets the
+    /// GeometryReader inside survive a ScrollView's nil height proposal.
+    private static let widthUnits: CGFloat = 15 + 14 / 4
+    private static let gridAspect: CGFloat = (15 + 14 / 4) / (7 + 6 / 4)
+
     private let calendar = Calendar.current
 
     private var completedDays: Set<Date> { Set(days.map(\.date)) }
@@ -35,7 +43,7 @@ struct StreakView: View {
                                      ? AnyShapeStyle(Theme.sunrise)
                                      : AnyShapeStyle(Theme.amber.opacity(0.35)))
                 Text(streak > 0 ? "\(streak)-day streak" : "Start your streak today")
-                    .font(.system(.headline, design: .rounded).bold())
+                    .font(.system(.title3, design: .rounded).bold())
                 Spacer()
                 if doneToday {
                     Label("Done today", systemImage: "checkmark.circle.fill")
@@ -45,9 +53,8 @@ struct StreakView: View {
             }
 
             grid
-                .frame(maxWidth: .infinity)
         }
-        .padding(16)
+        .padding(18)
         .dawnCard()
         .accessibilityElement(children: .ignore)
         .accessibilityIdentifier("streakCard")
@@ -55,26 +62,32 @@ struct StreakView: View {
     }
 
     private var grid: some View {
-        HStack(spacing: 3) {
-            ForEach(weekStarts, id: \.self) { weekStart in
-                VStack(spacing: 3) {
-                    ForEach(0..<7, id: \.self) { offset in
-                        daySquare(calendar.date(byAdding: .day, value: offset, to: weekStart)!)
+        GeometryReader { geo in
+            let square = geo.size.width / Self.widthUnits
+            let spacing = square / 4
+            HStack(spacing: spacing) {
+                ForEach(weekStarts, id: \.self) { weekStart in
+                    VStack(spacing: spacing) {
+                        ForEach(0..<7, id: \.self) { offset in
+                            daySquare(calendar.date(byAdding: .day, value: offset, to: weekStart)!,
+                                      size: square)
+                        }
                     }
                 }
             }
         }
+        .aspectRatio(Self.gridAspect, contentMode: .fit)
     }
 
     @ViewBuilder
-    private func daySquare(_ date: Date) -> some View {
+    private func daySquare(_ date: Date, size: CGFloat) -> some View {
         let isToday = date == todayStart
-        RoundedRectangle(cornerRadius: 3)
+        RoundedRectangle(cornerRadius: size / 4)
             .fill(squareColor(for: date))
-            .frame(width: 12, height: 12)
+            .frame(width: size, height: size)
             .overlay {
                 if isToday {
-                    RoundedRectangle(cornerRadius: 3)
+                    RoundedRectangle(cornerRadius: size / 4)
                         .strokeBorder(Theme.amberDeep, lineWidth: 1.5)
                 }
             }

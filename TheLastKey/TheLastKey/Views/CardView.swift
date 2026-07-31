@@ -9,7 +9,8 @@ struct CardView: View {
     var body: some View {
         VStack(spacing: 24) {
             Text(entry.meaning)
-                .font(.system(.title2, design: .rounded).weight(.semibold))
+                .font(.system(.title3, design: .rounded).weight(.medium))
+                .foregroundStyle(.secondary)
                 .lineSpacing(4)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -37,8 +38,6 @@ struct CardView: View {
                         .background(Theme.amber.opacity(0.16), in: Capsule())
                 }
             }
-
-            Spacer().frame(height: 4)
 
             if !revealed {
                 Button("Reveal") {
@@ -81,12 +80,12 @@ struct CardView: View {
                     .transition(.blurReplace)
             }
         }
-        .font(.system(.title2, design: .rounded).weight(.medium))
+        .font(.system(.largeTitle, design: .rounded).bold())
+        .minimumScaleFactor(0.5)
         .lineSpacing(6)
         .multilineTextAlignment(.center)
-        .padding(.vertical, 36)
-        .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity)
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .dawnCard()
         .padding(.horizontal)
     }
@@ -100,7 +99,7 @@ struct CardView: View {
             let next = attributed.characters.index(after: index)
             if attributed.characters[index] == "_" {
                 attributed[index..<next].foregroundColor = Theme.amberDeep
-                attributed[index..<next].kern = 1.5
+                attributed[index..<next].kern = 2.5
             }
             index = next
         }

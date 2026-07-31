@@ -64,33 +64,39 @@ struct TodayView: View {
         SessionPicker.pick(from: entries, limit: dailySessionSize)
     }
 
+    private var doneToday: Bool {
+        let todayStart = Calendar.current.startOfDay(for: .now)
+        return practiceDays.contains { $0.date == todayStart }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Theme.background.ignoresSafeArea()
 
-                VStack(spacing: 24) {
-                    Spacer()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        header
 
-                    HStack(spacing: 8) {
-                        Image(systemName: greeting.symbol)
-                            .foregroundStyle(Theme.sunrise)
-                        Text(greeting.text)
-                            .foregroundStyle(.secondary)
+                        heroCard
+
+                        if !previewedSession.isEmpty {
+                            TodaySessionPreview(entries: previewedSession,
+                                                isDoneToday: doneToday)
+                        }
+
+                        if !entries.isEmpty {
+                            StreakView(days: practiceDays)
+                        }
                     }
-                    .font(.system(.title3, design: .rounded).weight(.medium))
-
-                    Text("The Last Key")
-                        .font(.system(.largeTitle, design: .rounded).bold())
-
-                    heroCard
-
-                    if !entries.isEmpty {
-                        StreakView(days: practiceDays)
-                    }
-
-                    Spacer()
-
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 10) {
                     if previewedSession.isEmpty {
                         Button("Add your first sentence") {
                             onAddSentences()
@@ -108,10 +114,10 @@ struct TodayView: View {
                     Text(lastReviewedCaption)
                         .font(.system(.footnote, design: .rounded))
                         .foregroundStyle(.secondary)
-
-                    Spacer()
                 }
                 .padding(.horizontal, 24)
+                .padding(.top, 10)
+                .background(Theme.background)
             }
             .navigationDestination(item: $practiceRoute) { route in
                 PracticeView(session: route.entries)
@@ -122,34 +128,48 @@ struct TodayView: View {
         }
     }
 
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 6) {
+                Image(systemName: greeting.symbol)
+                    .foregroundStyle(Theme.sunrise)
+                Text(greeting.text)
+                    .foregroundStyle(.secondary)
+            }
+            .font(.system(.subheadline, design: .rounded).weight(.medium))
+
+            Text("The Last Key")
+                .font(.system(.title, design: .rounded).bold())
+        }
+    }
+
     private var heroCard: some View {
-        ZStack(alignment: .topTrailing) {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(entries.count)")
+                    .font(.system(.title, design: .rounded).bold())
+                Text(entries.count == 1 ? "sentence in your library" : "sentences in your library")
+                    .font(.system(.footnote, design: .rounded))
+                    .opacity(0.92)
+            }
+
+            Spacer()
+
+            if reviewCount > 0 {
+                Text("\(reviewCount) to review")
+                    .font(.system(.caption, design: .rounded).weight(.semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(.white.opacity(0.22), in: Capsule())
+            }
+
             Image(systemName: "key.fill")
-                .font(.system(size: 88))
+                .font(.system(size: 40))
                 .rotationEffect(.degrees(-28))
                 .foregroundStyle(.white.opacity(0.18))
-                .padding(.top, 6)
-                .padding(.trailing, 10)
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("\(entries.count)")
-                    .font(.system(.largeTitle, design: .rounded).bold())
-                Text(entries.count == 1 ? "sentence in your library" : "sentences in your library")
-                    .font(.system(.subheadline, design: .rounded))
-                    .opacity(0.92)
-                if reviewCount > 0 {
-                    Text("\(reviewCount) to review")
-                        .font(.system(.caption, design: .rounded).weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(.white.opacity(0.22), in: Capsule())
-                        .padding(.top, 4)
-                }
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(20)
         }
+        .foregroundStyle(.white)
+        .padding(16)
         .background(Theme.sunrise, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Theme.coral.opacity(0.3), radius: 16, y: 8)
     }
