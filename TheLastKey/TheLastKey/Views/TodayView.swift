@@ -36,14 +36,6 @@ struct TodayView: View {
 
     @State private var practiceRoute: PracticeRoute?
 
-    private var greeting: (text: String, symbol: String) {
-        switch Calendar.current.component(.hour, from: .now) {
-        case 5..<12: ("Good morning", "sun.and.horizon.fill")
-        case 12..<18: ("Good afternoon", "sun.max.fill")
-        default: ("Good evening", "moon.stars.fill")
-        }
-    }
-
     private var reviewCount: Int {
         entries.filter(\.needsReview).count
     }
@@ -76,8 +68,6 @@ struct TodayView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        header
-
                         heroCard
 
                         if !previewedSession.isEmpty {
@@ -90,7 +80,7 @@ struct TodayView: View {
                         }
                     }
                     .padding(.horizontal, 24)
-                    .padding(.top, 8)
+                    .padding(.top, 12)
                     .padding(.bottom, 12)
                 }
                 .scrollBounceBehavior(.basedOnSize)
@@ -128,30 +118,15 @@ struct TodayView: View {
         }
     }
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(spacing: 6) {
-                Image(systemName: greeting.symbol)
-                    .foregroundStyle(Theme.sunrise)
-                Text(greeting.text)
-                    .foregroundStyle(.secondary)
-            }
-            .font(.system(.subheadline, design: .rounded).weight(.medium))
-
-            Text("The Last Key")
-                .font(.system(.title, design: .rounded).bold())
-        }
-    }
-
     private var heroCard: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(entries.count)")
-                    .font(.system(.title, design: .rounded).bold())
-                Text(entries.count == 1 ? "sentence in your library" : "sentences in your library")
-                    .font(.system(.footnote, design: .rounded))
-                    .opacity(0.92)
-            }
+        HStack(spacing: 8) {
+            Image(systemName: "key.fill")
+                .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                .foregroundStyle(.white.opacity(0.85))
+            Text(entries.count == 1
+                 ? "1 sentence in your library"
+                 : "\(entries.count) sentences in your library")
+                .font(.system(.subheadline, design: .rounded).weight(.semibold))
 
             Spacer()
 
@@ -159,19 +134,15 @@ struct TodayView: View {
                 Text("\(reviewCount) to review")
                     .font(.system(.caption, design: .rounded).weight(.semibold))
                     .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
+                    .padding(.vertical, 4)
                     .background(.white.opacity(0.22), in: Capsule())
             }
-
-            Image(systemName: "key.fill")
-                .font(.system(size: 40))
-                .rotationEffect(.degrees(-28))
-                .foregroundStyle(.white.opacity(0.18))
         }
         .foregroundStyle(.white)
-        .padding(16)
-        .background(Theme.sunrise, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: Theme.coral.opacity(0.3), radius: 16, y: 8)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(Theme.sunrise, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: Theme.coral.opacity(0.25), radius: 10, y: 5)
     }
 }
 
