@@ -36,6 +36,7 @@ Hosted on GitHub at **[Sung-13/the-last-key](https://github.com/Sung-13/the-last
 | App icon (2026-07-16) | Painterly layered paint-stroke bands (Werner Bronkhorst-inspired) with a bold white "K", Dawn Warm palette — user chose this over Bronkhorst blues / sunset-with-dark-contrast |
 | Habit streak (2026-07-16) | User explicitly requested streak tracking (reverses the earlier "no streaks" non-goal). GitHub-style squares grid + flame counter on Today — chosen over month calendar |
 | Morning-start mechanism (2026-07-16) | Home Screen widget (streak + today's done/not-done) — user chose this over local morning notification and Shortcuts App Intent. A completed day = the daily session finished (all cards cleared) |
+| Alarm automation (2026-07-31) | Shortcuts personal automation "Alarm Is Stopped → Open App" with **zero app code** — user chose this over adding an App Intent that auto-starts the session. Works because cold launch lands on Today (`selectedTab` defaults `.today`). Auto-start deep link (App Intent + lifting `selectedTab`/`practiceRoute` into a shared router) deliberately deferred. Setup guide: `/Users/sungkyungkim/.claude/plans/user-to-set-up-scalable-graham.md` |
 | Input | Manual entry in-app only |
 | Storage | Local on-device only — SwiftData |
 | Platform | iPhone, iOS 17+, SwiftUI, SwiftData, AVFoundation. Zero external dependencies. |
@@ -59,4 +60,4 @@ Hosted on GitHub at **[Sung-13/the-last-key](https://github.com/Sung-13/the-last
 ## Next steps remaining
 
 1. Run on a physical iPhone to hear real TTS quality and feel the haptics (simulator can't verify either). On device, set a DEVELOPMENT_TEAM on both app + widget targets first (App Group provisioning).
-2. User to set up the morning ritual outside the app (told 2026-07-16): Shortcuts automation "When I stop my alarm → Open The Last Key", Screen Time limit on YouTube, widget on the first home-screen page.
+2. User to set up the morning ritual outside the app (told 2026-07-16): Shortcuts automation "When I stop my alarm → Open The Last Key" (step-by-step guide written 2026-07-31: `/Users/sungkyungkim/.claude/plans/user-to-set-up-scalable-graham.md` — zero-code, see decisions table), Screen Time limit on YouTube, widget on the first home-screen page.
